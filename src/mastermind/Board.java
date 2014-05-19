@@ -7,8 +7,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 
 /**
@@ -17,36 +19,20 @@ import javax.swing.JPanel;
  */
 public class Board extends JPanel implements Runnable {
 
-    /**
-     * Širina table
-     */
     public final int PANEL_WIDTH = 800;
-    /**
-     * Visina table
-     */
+
     public final int PANEL_HEIGHT = 600;
     
-    final Color BACKGROUND_COLOR = Color.yellow;
+    final Color BACKGROUND_COLOR = Color.orange;
     final Thread runner;
     
-    // Bodovi u igri
-    
-    
     Boolean inGame;
-    
-    
-    // Objekti u igri
-    
-    Ball ball;
-    
-    
+
     String message;
     
-    /**
-     * Podrazumjevani konstruktor. Postavlja veličinu table, boju pozadine i font,
-     * inicijalizuje početni rezultat, te objekte u igri. Inicijalizuje i pokreće
-     * radnu nit.
-     */
+    Pictures pic1, pic2, pic3;
+    
+    
     public Board() {
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setBackground(BACKGROUND_COLOR);
@@ -57,8 +43,9 @@ public class Board extends JPanel implements Runnable {
         inGame = false;
         message = "Master Mind!";
         
-        ball = new Ball(this);
-        
+        pic1 = new Pictures (0, 0);
+        pic2 = new Pictures (50, 0);
+        pic3 = new Pictures (100, 0);
         
         runner = new Thread(this);
         runner.start();
@@ -81,36 +68,25 @@ public class Board extends JPanel implements Runnable {
         
         Graphics2D g2 = (Graphics2D) g;
         
-        if (inGame) {
-            // Savjeti pri iscrtavanju
+           if (inGame) {
         
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Iscrtaj teren
-
-            g2.drawRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+            pic1.draw(g2);
+            pic2.draw(g2);
+            pic3.draw(g2);
             
 
-            // Iscrtaj sve objekte
-
-            ball.draw(g2);
-            
-            // Sinhronizovanje sa grafičkom kartom
             Toolkit.getDefaultToolkit().sync();
 
-            // Optimizacija upotrebe RAM-a, 
             g.dispose();
-        } else {
+        }
+        else {
             int messageWidth = getFontMetrics(getFont()).stringWidth(message);
             g2.drawString(message, PANEL_WIDTH/2 - messageWidth/2, PANEL_HEIGHT/2);
-        }
+        } 
+        
+       
     }
-    
-    
-    
    
-
     @Override
     public void run() {        
         while(true) {
@@ -122,8 +98,8 @@ public class Board extends JPanel implements Runnable {
             } catch (InterruptedException ex) {
                 System.out.println(ex.toString());
             }
-        }
-    }
+        } 
+    } 
     
 }
 
