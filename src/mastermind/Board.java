@@ -66,7 +66,7 @@ public class Board extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         if (inGame) {
-
+//problem je nastao obacivanjem novih slika
             Dugmici button = new Dugmici(10, 0, 50, 50, "herc.png");
             add(button);
        
