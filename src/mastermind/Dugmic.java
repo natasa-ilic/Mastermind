@@ -111,7 +111,7 @@ import javax.swing.JButton;
         m.setVisible(true);
     } */
 
-    public class Dugmici extends JButton implements ActionListener {
+    public class Dugmic extends JButton implements ActionListener {
 
     /**
      *
@@ -121,7 +121,7 @@ import javax.swing.JButton;
      * @param height
      * @param filename
      */
-    public Dugmici(int x, int y, int width, int height, String filename) {
+    public Dugmic(int x, int y, int width, int height, String filename) {
         setBounds(x, y, width, height);
         setIcon(new ImageIcon(getClass().getResource(filename)));
     }

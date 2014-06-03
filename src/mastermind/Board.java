@@ -5,17 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import javax.swing.JPanel;
-import java.awt.event.ActionListener;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
@@ -30,6 +20,8 @@ public class Board extends JPanel implements Runnable {
 
     final Color BACKGROUND_COLOR = Color.orange;
     final Thread runner;
+    
+    Dugmic[] dugmici = new Dugmic[6];
 
     Boolean inGame;
 
@@ -41,6 +33,8 @@ public class Board extends JPanel implements Runnable {
         setFocusable(true);
         setFont(getFont().deriveFont(Font.BOLD, 20f));
         setDoubleBuffered(true);
+        
+        initDugmici();
 
         inGame = false;
         message = "Mastermind!";
@@ -50,8 +44,10 @@ public class Board extends JPanel implements Runnable {
     }
 
     public void startGame() {
-
         inGame = true;
+        for (int i = 0; i < 6; i++) {
+            dugmici[i].setVisible(true); 
+        }
     }
 
     public void stopGame(String message) {
@@ -65,11 +61,8 @@ public class Board extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        if (inGame) {
-//problem je nastao obacivanjem novih slika
-            Dugmici button = new Dugmici(10, 0, 50, 50, "herc.png");
-            add(button);
-       
+        if (inGame) {    
+            
             Toolkit.getDefaultToolkit().sync();
 
             g.dispose();
@@ -94,4 +87,20 @@ public class Board extends JPanel implements Runnable {
         }
     }
 
+    private void initDugmici() {
+        String[] slike = {
+            "herc.png",
+            "karo.png",
+            "pik.png",
+            "tref.png",
+            "zeko.png",
+            "zvezdica.png"
+        };
+        
+        for (int i = 0; i < 6; i++) {
+            dugmici[i] = new Dugmic(i*50, 0, 50, 60, ".\\pictures\\" + slike[i]);
+            dugmici[i].setVisible(false);
+            add(dugmici[i]);
+        }
+    }
 }
