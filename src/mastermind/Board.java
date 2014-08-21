@@ -1,11 +1,13 @@
 package mastermind;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
@@ -22,7 +24,8 @@ public class Board extends JPanel implements Runnable {
     final Thread runner;
     
     Dugmic[] dugmici = new Dugmic[6];
-
+    
+    Dugmic[] pokusaj = new Dugmic[2];
 
     Boolean inGame;
     Polje polje;
@@ -38,6 +41,7 @@ public class Board extends JPanel implements Runnable {
         setFont(getFont().deriveFont(Font.BOLD, 20f));
         setDoubleBuffered(true);
         
+        
         initDugmici();
 
         inGame = false;
@@ -47,12 +51,17 @@ public class Board extends JPanel implements Runnable {
         table2 = new Table (450,100);
         runner = new Thread(this);
         runner.start();
+       
+        
     }
 
     public void startGame() {
         inGame = true;
         for (int i = 0; i < 6; i++) {
             dugmici[i].setVisible(true); 
+        }
+        for (int i = 0; i < 2; i++) {
+            pokusaj[i].setVisible(true);
         }
        
     }
@@ -100,7 +109,7 @@ public class Board extends JPanel implements Runnable {
     }
 
     private void initDugmici() {
-        String[] slike = {
+        String[] slike1 = {
             "herc.png",
             "karo.png",
             "pik.png",
@@ -109,11 +118,21 @@ public class Board extends JPanel implements Runnable {
             "zvezdica.png"
         };
         
+        String[] slike2 = {
+            "delete.png",
+            "true.png"
+        };
+        
         for (int i = 0; i < 6; i++) {
-            dugmici[i] = new Dugmic(i*50, 0, 50, 60, ".\\pictures\\" + slike[i]);
+            dugmici[i] = new Dugmic(i*50, 0, 50, 60, ".\\pictures\\" + slike1[i]);
             dugmici[i].setVisible(false);
             add(dugmici[i]);
             
+        }
+        for (int i = 0; i < 2; i++) {
+            pokusaj[i] = new Dugmic (320, i*50, 70, 30, ".\\pictures\\" + slike2[i]);
+            pokusaj[i].setVisible(false);
+            add(pokusaj[i]);
         }
     }
    
