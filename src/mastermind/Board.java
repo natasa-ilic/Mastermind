@@ -14,7 +14,7 @@ import javax.swing.JPanel;
  */
 public class Board extends JPanel implements Runnable {
 
-    public final int PANEL_WIDTH = 800;
+    public final int PANEL_WIDTH = 700;
 
     public final int PANEL_HEIGHT = 600;
 
@@ -23,8 +23,12 @@ public class Board extends JPanel implements Runnable {
     
     Dugmic[] dugmici = new Dugmic[6];
 
-    Boolean inGame;
 
+    Boolean inGame;
+    Polje polje;
+    Table table1;
+    Table table2;
+    
     String message;
 
     public Board() {
@@ -38,7 +42,9 @@ public class Board extends JPanel implements Runnable {
 
         inGame = false;
         message = "Mastermind!";
-
+        
+        table1 = new Table(50,100);
+        table2 = new Table (450,100);
         runner = new Thread(this);
         runner.start();
     }
@@ -48,12 +54,15 @@ public class Board extends JPanel implements Runnable {
         for (int i = 0; i < 6; i++) {
             dugmici[i].setVisible(true); 
         }
+       
     }
 
     public void stopGame(String message) {
         inGame = false;
         this.message = message;
     }
+    
+    
 
     @Override
     public void paint(Graphics g) {
@@ -62,9 +71,12 @@ public class Board extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         if (inGame) {    
-            
+         
             Toolkit.getDefaultToolkit().sync();
-
+            g2.setColor(Color.red);
+           
+            table1.draw(g2);
+            table2.draw(g2);
             g.dispose();
         } else {
             int messageWidth = getFontMetrics(getFont()).stringWidth(message);
@@ -101,6 +113,8 @@ public class Board extends JPanel implements Runnable {
             dugmici[i] = new Dugmic(i*50, 0, 50, 60, ".\\pictures\\" + slike[i]);
             dugmici[i].setVisible(false);
             add(dugmici[i]);
+            
         }
     }
+   
 }
