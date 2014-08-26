@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -164,6 +165,14 @@ public class Board extends JPanel implements Runnable {
 
         }
 
+        /*dugmici[0].addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                Click("herc", 'H', 1, 0, slike[0]);
+            }
+        });*/
+        
         //dugme sa znakom "herc" se iscrtava u panelu klikom na njega
         dugmici[0].addActionListener(new ActionListener() {
 
@@ -299,6 +308,15 @@ public class Board extends JPanel implements Runnable {
             }
         });
     }
+    
+    private void Click(String znak, String imagePath, char z, int i, int j) {
+        System.out.println(znak);
+        if (br < 4) {
+            pokusaj.add(z);
+            panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + imagePath));
+        }
+        System.out.println(pokusaj);
+    }
 
     public Board(Thread runner) {
         this.runner = runner;
@@ -312,7 +330,7 @@ public class Board extends JPanel implements Runnable {
         // prolazi se kroz rjesenje
         for (int s = 0; s < rjesenje.size(); s++) {
             // ako se i-to slovo rjesenja nalazi na i-tom mjestu pokusaja, to je X
-            if (rjesenje.get(s) == pokusaj.get(s)) {
+            if (Objects.equals(rjesenje.get(s), pokusaj.get(s))) {
                 brX++;
             } 
             
@@ -321,7 +339,7 @@ public class Board extends JPanel implements Runnable {
                 // prolazi se kroz pokusaj
                 for (int v = 0; v < pokusaj.size(); v++) // pri nailasku na prvu pojavu i-tog slova rjesenja u pokusaju
                 {
-                    if (rjesenje.get(s) == pokusaj.get(v)) {
+                    if (Objects.equals(rjesenje.get(s), pokusaj.get(v))) {
                         brO++; // ubroji se O i prelazi na sledece slovo rjesenja
                         break;
                     }
