@@ -51,9 +51,20 @@ public class Frame extends JFrame {
                 board.startGame();
             }
         });
+        
+        JMenuItem help = new JMenuItem("Help");
+        help.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                board.Help();
+            }
+        });
 
         // Dodamo stavku u meni
         gameMenu.add(newGame);
+        gameMenu.add(help);
+
 
         // Dodamo meni u liniju menija
         menuBar.add(gameMenu);
