@@ -25,34 +25,38 @@ import javax.swing.JPanel;
  */
 public class Board extends JPanel implements Runnable {
 
+    //širina panela
     public final int PANEL_WIDTH = 900;
+    //visina panela
     public final int PANEL_HEIGHT = 600;
     
+    //brojači
     int i = 1;
     int j = 0;
     int brpo = 0;
     
     private Image beginning_image;
     
+    //postavljanje pozadinske boje
     final Color BACKGROUND_COLOR = Color.orange;
     final Thread runner;
     int br = 0;
     Dugmic[] dugmici = new Dugmic[6];
 
     //dva dugmeta za unos i brisanje kombinacije i dva nova panela na kojima ce se iscrtavati kombinacija i vrsiti provjera kombinacije
-    JButton entry = new JButton("Potvrdi");
+    JButton entry = new JButton("Confirm");
     JPanel panel1 = new JPanel();
     JPanel panel2 = new JPanel();
-    JButton delete = new JButton("Nazad");
+    JButton backspace = new JButton("Delete");
     
     Boolean inGame;
     
     //niz od 6 znakova koji se koriste za kombinaciju
     private Vector<Character> lettersVector = new Vector<>(6);
-   //niz za rjesenje
-    private Vector<Character> rjesenje = new Vector<>(4);
+    //niz za rjesenje
+    private Vector<Character> solution = new Vector<>(4);
     //niz za pokusaj
-    private Vector<Character> pokusaj = new Vector<>(4);
+    private Vector<Character> attempt = new Vector<>(4);
     
     String message;
 
@@ -63,9 +67,7 @@ public class Board extends JPanel implements Runnable {
         setFocusable(true);
         setFont(getFont().deriveFont(Font.BOLD, 20f));
         setDoubleBuffered(true);
-        
-         
-        
+    
         initDugmici();
         
         //dodavanje dugmica za unos kombinacije (potvrdu)
@@ -76,54 +78,61 @@ public class Board extends JPanel implements Runnable {
         //dodavanje panela
         add(panel1);
         add(panel2);
+        panel1.setBackground(Color.white);
+        panel2.setBackground(Color.WHITE);
         
         //dodavanje dugmeta za brisanje
-        delete.setBounds(415, 140, 80, 30);
-        delete.setVisible(false);
-        add(delete);
+        backspace.setBounds(415, 140, 80, 30);
+        backspace.setVisible(false);
+        add(backspace);
         
         inGame = false;
-        
-        message = "Mastermind!";
-        
+           
         //kreiranje liste znakova
         lettersVector.addAll(Arrays.asList('H', 'K', 'P', 'T', 'S', 'Z'));
         Collections.shuffle(lettersVector);
         System.out.println(lettersVector);
         
         //kreiranje niza rjesenja (random generise niz od 4 znaka)
-        rjesenje.addAll(lettersVector.subList(0, 4));
-        System.out.println(rjesenje);
+        solution.addAll(lettersVector.subList(0, 4));
+        System.out.println(solution);
      
-        //odredjivanje granica za panele
-        panel1.setBounds(550, 100, 300, 450);
-        panel2.setBounds(50, 100, 300, 450);
+        //određivanje granica za panele
+        panel1.setBounds(50, 100, 300, 450);
+        panel2.setBounds(550, 100, 300, 450);
         panel1.setVisible(false);
         panel2.setVisible(false);
 
         runner = new Thread(this);
         runner.start();
-        
-
     }
 
+    //metoda koja se poziva prilikom svakog startovanja igrice, postavlja panele i sve dugmice vidljivim
     public void startGame() {
         inGame = true;
         for (int i = 0; i < 6; i++) {
             dugmici[i].setVisible(true);
         }
         entry.setVisible(true);
-        delete.setVisible(true);
+        backspace.setVisible(true);
         panel1.setVisible(true);
         panel2.setVisible(true);
     }
 
+    //metoda koja se poziva prilikom zavrsetka igrice 
     public void stopGame(String message) {
         inGame = false;
-        this.message = message;
+        entry.setVisible(false);
+        backspace.setVisible(false);
+        for (int i = 0; i < 6; i++) {
+            dugmici[i].setVisible(false);
+        }
+        panel1.setVisible(false);
+        panel2.setVisible(false); 
     }
-
     
+
+    //metoda za iscrtavanje; ako igrica nije aktivna, vraća nam početnu sliku
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -131,19 +140,17 @@ public class Board extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         if (inGame) {
-
+            //sinhronizovanje sa grafičkom kartom
             Toolkit.getDefaultToolkit().sync();
-            g2.setColor(Color.red);
+            //optimizacija upotrebe RAM-a
             g.dispose();
         } else {
            beginning_image = new ImageIcon(getClass().getResource("pocetna.png")).getImage();
            g2.drawImage(beginning_image, 0, 0, null ); 
-           // int messageWidth = getFontMetrics(getFont()).stringWidth(message);
-            //g2.drawString(message, PANEL_WIDTH / 2 - messageWidth / 2, PANEL_HEIGHT / 2);
         }
-
     }
 
+    //metoda koja provjerava da li je igrica aktivna, ako jeste onda ponovo iscrtava
     @Override
     public void run() {
         while (true) {
@@ -171,17 +178,21 @@ public class Board extends JPanel implements Runnable {
 
         //ubacivanje 6 dugmica na vrhu stranice
         for (int i = 0; i < 6; i++) {
-            dugmici[i] = new Dugmic(i * 50, 0, 50, 60, ".\\pictures\\" + slike[i]);
+            dugmici[i] = new Dugmic(i*50, 0, 50, 60, ".\\pictures\\" + slike[i]);
             dugmici[i].setVisible(false);
             add(dugmici[i]);
-
         }
 
-        /*dugmici[0].addActionListener(new ActionListener() {
+     /*   dugmici[i].addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 Click("herc", 'H', 1, 0, slike[0]);
+                Click("karo", 'K', 1, 0, slike[1]);
+                Click("pik", 'P', 1, 0, slike[2]);
+                Click("tref", 'T', 1, 0, slike[3]);
+                Click("zeko", 'S', 1, 0, slike[4]);
+                Click("zvezdica", 'Z',1, 0, slike[5]);
             }
         });*/
         
@@ -192,12 +203,12 @@ public class Board extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent ae) {
                 System.out.println("herc");
                 if (br < 4) {
-                    pokusaj.add('H');
-                    panel2.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[0]));
+                    attempt.add('H');
+                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[0]));
                     br++;
                     i++;
                 }
-                System.out.println(pokusaj);
+                System.out.println(attempt);
             }
         });
 
@@ -208,12 +219,12 @@ public class Board extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent ae) {
                 System.out.println("karo");
                 if (br < 4) {
-                    pokusaj.add('K');
-                    panel2.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[1]));
+                    attempt.add('K');
+                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[1]));
                     br++;
                     i++;
                 }
-                System.out.println(pokusaj);
+                System.out.println(attempt);
             }
         });
         
@@ -224,13 +235,12 @@ public class Board extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent ae) {
                 System.out.println("pik");
                 if (br < 4) {
-                    pokusaj.add('P');
-                    panel2.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[2]));
+                    attempt.add('P');
+                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[2]));
                     i++;
                     br++;
-
                 }
-                System.out.println(pokusaj);
+                System.out.println(attempt);
             }
         });
 
@@ -241,12 +251,12 @@ public class Board extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent ae) {
                 System.out.println("tref");
                 if (br < 4) {
-                    pokusaj.add('T');
-                    panel2.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[3]));
+                    attempt.add('T');
+                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[3]));
                     i++;
                     br++;
                 }
-                System.out.println(pokusaj);
+                System.out.println(attempt);
             }
         });
 
@@ -257,12 +267,12 @@ public class Board extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent ae) {
                 System.out.println("zeka");
                 if (br < 4) {
-                    pokusaj.add('S');
-                    panel2.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[4]));
+                    attempt.add('S');
+                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[4]));
                     i++;
                     br++;
                 }
-                System.out.println(pokusaj);
+                System.out.println(attempt);
             }
         });
 
@@ -273,17 +283,17 @@ public class Board extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent ae) {
                 System.out.println("zvezda");
                 if (br < 4) {
-                    pokusaj.add('Z');
-                    panel2.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[5]));
+                    attempt.add('Z');
+                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[5]));
                     i++;
                     br++;
                 }
-                System.out.println(pokusaj);
+                System.out.println(attempt);
             }
         });
 
         //dugme za brisanje
-        delete.addActionListener(new ActionListener() {
+        backspace.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -291,7 +301,7 @@ public class Board extends JPanel implements Runnable {
                 if (br < 0) {
                     br = 0;
                 } else {
-                    pokusaj.remove(br);
+                    attempt.removeElementAt(br);
                     i--;
                 }
             }
@@ -303,31 +313,33 @@ public class Board extends JPanel implements Runnable {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (brpo == 5) {
-                    JOptionPane.showMessageDialog(panel1, "Kraj igre!");
+                    Provjera();
+                    JOptionPane.showMessageDialog(panel2, "Game over!");
+                    stopGame(message);
                 } else {
                     if (br == 4) {
                         System.out.println("potvrda");
                         Provjera();
                         j++;
-                        pokusaj.removeAll(pokusaj);
+                        attempt.removeAll(attempt);
                         i = 1;
                         br = 0;
                         brpo++;
                     } else {
-                        JOptionPane.showMessageDialog(panel1, "Morate popuniti sva polja!");
+                        JOptionPane.showMessageDialog(panel2, "You have to fill in all fields!");
                     }
                 }
             }
         });
     }
     
-    private void Click(String znak, String imagePath, char z, int i, int j) {
+    private void Click(String znak, char z, int i, int j,  String imagePath) {
         System.out.println(znak);
         if (br < 4) {
-            pokusaj.add(z);
-            panel2.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + imagePath));
+            attempt.add(z);
+            panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + imagePath));
         }
-        System.out.println(pokusaj);
+        System.out.println(attempt);
     }
 
     public Board(Thread runner) {
@@ -340,18 +352,15 @@ public class Board extends JPanel implements Runnable {
         int brO = 0; //broj pogodjenih koji se ne nalaze na tacnom mjestu
 
         // prolazi se kroz rjesenje
-        for (int s = 0; s < rjesenje.size(); s++) {
+        for (int s = 0; s < solution.size(); s++) {
             // ako se i-to slovo rjesenja nalazi na i-tom mjestu pokusaja, to je X
-            if (Objects.equals(rjesenje.get(s), pokusaj.get(s))) {
+            if (Objects.equals(solution.get(s), attempt.get(s))) {
                 brX++;
-            } 
-            
-            
-            else {
+            } else {
                 // prolazi se kroz pokusaj
-                for (int v = 0; v < pokusaj.size(); v++) // pri nailasku na prvu pojavu i-tog slova rjesenja u pokusaju
+                for (int v = 0; v < attempt.size(); v++) // pri nailasku na prvu pojavu i-tog slova rjesenja u pokusaju
                 {
-                    if (Objects.equals(rjesenje.get(s), pokusaj.get(v))) {
+                    if (Objects.equals(solution.get(s), attempt.get(v))) {
                         brO++; // ubroji se O i prelazi na sledece slovo rjesenja
                         break;
                     }
@@ -359,36 +368,36 @@ public class Board extends JPanel implements Runnable {
             }
         }
         
-        JButton mjesto;
+        JButton location;
         int k;
         int m = brX + brO;
         for (k = 0; k < m; k++) {
             if (k < brX) {
                 System.out.println("na mjestu");
-                mjesto = new JButton();
+                location = new JButton();
                 //ako je znak pogodjen i na tacnom mjestu, iscrta se crveno dugme
-                mjesto.setBackground(Color.RED);
-                mjesto.setBounds(k * 50, j * 70, 50, 60);
-                panel1.add(mjesto);
+                location.setBackground(Color.RED);
+                location.setBounds(k * 50, j * 70, 50, 60);
+                panel2.add(location);
             } else {
                 System.out.println("nije na mjestu");
-                mjesto = new JButton();
+                location = new JButton();
                 //ako je znak pogodjen i nije na tacnom mjestu, iscrta se zuto dugme
-                mjesto.setBackground(Color.YELLOW);
-                mjesto.setBounds(k * 50, j * 70, 50, 60);
-                panel1.add(mjesto);
+                location.setBackground(Color.YELLOW);
+                location.setBounds(k * 50, j * 70, 50, 60);
+                panel2.add(location);
             }
         }
         
-        //ako je pogodjena trazena kombinacija, otvori nam se kartica sa obavjestenjem
+        //ako je pogođena trazena kombinacija, otvori nam se kartica sa obavjestenjem
             if (brX == 4) {
-            JOptionPane.showMessageDialog(panel2, "Pogodak");
+            JOptionPane.showMessageDialog(panel1, "You win!");
             stopGame(message);
-            //startGame();
         }
         
     }
     
+    //metoda koja daje dodatno objašnjenje kako se igrica igra
     public void Help() {
         JOptionPane.showMessageDialog(null,
                 "There are six signs at the top of the table.\n\n"
