@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Stack;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,6 +58,7 @@ public class Board extends JPanel implements Runnable {
     private Vector<Character> solution = new Vector<>(4);
     //niz za pokusaj
     private Vector<Character> attempt = new Vector<>(4);
+    private Stack<Dugmic> delete_stack = new Stack<Dugmic>();
     
     String message;
 
@@ -79,7 +81,7 @@ public class Board extends JPanel implements Runnable {
         add(panel1);
         add(panel2);
         panel1.setBackground(Color.white);
-        panel2.setBackground(Color.WHITE);
+        panel2.setBackground(Color.white);
         
         //dodavanje dugmeta za brisanje
         backspace.setBounds(415, 140, 80, 30);
@@ -204,7 +206,9 @@ public class Board extends JPanel implements Runnable {
                 System.out.println("herc");
                 if (br < 4) {
                     attempt.add('H');
-                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[0]));
+	Dugmic s = new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[0]);
+                    panel1.add(s);
+                    delete_stack.push(s);
                     br++;
                     i++;
                 }
@@ -220,7 +224,9 @@ public class Board extends JPanel implements Runnable {
                 System.out.println("karo");
                 if (br < 4) {
                     attempt.add('K');
-                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[1]));
+                    Dugmic s = new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[1]);
+                    panel1.add(s);
+                    delete_stack.push(s);
                     br++;
                     i++;
                 }
@@ -236,7 +242,9 @@ public class Board extends JPanel implements Runnable {
                 System.out.println("pik");
                 if (br < 4) {
                     attempt.add('P');
-                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[2]));
+                    Dugmic s = new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[2]);
+                    panel1.add(s);
+                    delete_stack.push(s);
                     i++;
                     br++;
                 }
@@ -252,7 +260,9 @@ public class Board extends JPanel implements Runnable {
                 System.out.println("tref");
                 if (br < 4) {
                     attempt.add('T');
-                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[3]));
+                    Dugmic s = new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[3]);
+                    panel1.add(s);
+                    delete_stack.push(s);
                     i++;
                     br++;
                 }
@@ -268,7 +278,9 @@ public class Board extends JPanel implements Runnable {
                 System.out.println("zeka");
                 if (br < 4) {
                     attempt.add('S');
-                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[4]));
+                    Dugmic s = new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[4]);
+                    panel1.add(s);
+                    delete_stack.push(s);
                     i++;
                     br++;
                 }
@@ -284,7 +296,9 @@ public class Board extends JPanel implements Runnable {
                 System.out.println("zvezda");
                 if (br < 4) {
                     attempt.add('Z');
-                    panel1.add(new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[5]));
+                    Dugmic s = new Dugmic(i * 50, j * 70, 50, 60, ".\\pictures\\" + slike[5]);
+                    panel1.add(s);
+                    delete_stack.push(s);
                     i++;
                     br++;
                 }
@@ -301,7 +315,11 @@ public class Board extends JPanel implements Runnable {
                 if (br < 0) {
                     br = 0;
                 } else {
-                    attempt.removeElementAt(br);
+                    attempt.remove(br);
+                    System.out.println(attempt);
+                    panel1.remove(delete_stack.pop());
+                    //potezi.pop();
+                    System.out.println(delete_stack);
                     i--;
                 }
             }
